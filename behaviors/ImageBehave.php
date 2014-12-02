@@ -79,9 +79,9 @@ class ImageBehave extends Behavior
         $image->number = $this->getImagesCount()+1;
         $image->save();
         if (count($image->getErrors()) > 0) {
-            $ar = array_shift($image->getErrors());
+            $ar = print_r($image->getErrors(), true);
             unlink($newAbsolutePath);
-            throw new \Exception(array_shift($ar));
+            throw new \Exception($ar);
         }
 
 
@@ -237,6 +237,9 @@ class ImageBehave extends Behavior
     private function getAliasForImage(){
         if ($this->aliasSourceMethod) {
             $string = $this->owner->{$this->aliasSourceMethod}();
+            if($string==''){
+                throw new \Exception("Users alias method must not return empty string");
+            }
             if (!is_string($string)) {
                 throw new \Exception("Image's alias must be string!");
             } else {

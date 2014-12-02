@@ -16,6 +16,18 @@ use \rico2\yii2images\ModuleTrait;
 class ImagesController extends Controller
 {
     use ModuleTrait;
+    public $enableCsrfValidation = false;
+
+    public function actionSetMainImage($imageId)
+    {
+
+    }
+
+    public function actionRemoveImage($imageId)
+    {
+
+    }
+
     public function actionIndex()
     {
         echo "Hello, man. It's ok, dont worry.";

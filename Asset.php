@@ -6,12 +6,12 @@
  * Time: 15:32
  */
 
-namespace rico\yii2images;
+namespace rico2\yii2images;
 use yii\web\AssetBundle;
 
 
 class Asset extends AssetBundle{
-    public $sourcePath = '@app/vendor/costa-rico/yii2-images/widgets/views';
+    public $sourcePath = '@app/vendor/costa-rico/yii2-images2/widgets/views';
     public $js = [
         'imagesLoader.js'
     ];

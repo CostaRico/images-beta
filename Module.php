@@ -8,6 +8,8 @@ use rico2\yii2images\models\UrlManager;
 use SebastianBergmann\Exporter\Exception;
 use yii;
 use rico2\yii2images\models\Image;
+use yii\helpers\Url;
+
 
 class Module extends \yii\base\Module
 {
@@ -34,6 +36,8 @@ class Module extends \yii\base\Module
     public $waterMark = false;
 
     public $urlManager = null;
+    public $removeImageUrl = null;
+    public $setMainImageUrl = null;
 
     public $effects = [];
 
@@ -46,18 +50,18 @@ class Module extends \yii\base\Module
     public function imageClass()
     {
         $imgClassName = null;
-        if(!isset($this->imageClasses[$this->graphicsLibrary])){
+        if (!isset($this->imageClasses[$this->graphicsLibrary])) {
             throw new yii\base\Exception('I cant find correct Image class for your graphics library, config array must contain "GD" or "imagick" key.');
-        }else{
+        } else {
             $imgClassName = $this->imageClasses[$this->graphicsLibrary];
         }
 
-        if(!is_subclass_of($imgClassName, self::IMAGE_BASE_CLASS)){
-            throw new yii\base\Exception('Image class must be child of Image Abstract class '.self::IMAGE_BASE_CLASS);
+        if (!is_subclass_of($imgClassName, self::IMAGE_BASE_CLASS)) {
+            throw new yii\base\Exception('Image class must be child of Image Abstract class ' . self::IMAGE_BASE_CLASS);
         }
 
-        if(!is_subclass_of($imgClassName, self::IMAGE_INTERFACE_CLASS)){
-            throw new yii\base\Exception('Image class must implements interface '.self::IMAGE_INTERFACE_CLASS);
+        if (!is_subclass_of($imgClassName, self::IMAGE_INTERFACE_CLASS)) {
+            throw new yii\base\Exception('Image class must implements interface ' . self::IMAGE_INTERFACE_CLASS);
         }
         return $imgClassName;
     }
@@ -84,7 +88,7 @@ class Module extends \yii\base\Module
                 'urlAlias' => $alias
             ])
             ->one();
-        if(!$image){
+        if (!$image) {
             return $this->getPlaceHolder();
         }
 
@@ -190,22 +194,22 @@ class Module extends \yii\base\Module
 
     private function registerEffects()
     {
-        foreach($this->effects as $effect){
+        foreach ($this->effects as $effect) {
             $this->checkEffect($effect);
         }
     }
 
     public function checkEffect($effectClassName)
     {
-        if(class_implements($effectClassName, 'rico2\yii2images\inters\ImagickEffectInterface')){
-            if($this->graphicsLibrary != 'Imagick'){
+        if (class_implements($effectClassName, 'rico2\yii2images\inters\ImagickEffectInterface')) {
+            if ($this->graphicsLibrary != 'Imagick') {
                 throw new \Exception('Effect class must implement Imagick Effect interface');
             }
-        }elseif(class_implements($effectClassName, 'rico2\yii2images\inters\GDEffectInterface')){
-            if($this->graphicsLibrary != 'GD'){
+        } elseif (class_implements($effectClassName, 'rico2\yii2images\inters\GDEffectInterface')) {
+            if ($this->graphicsLibrary != 'GD') {
                 throw new \Exception('Effect class must implement GD Effect interface');
             }
-        }else{
+        } else {
             throw new \Exception('Effect class must implement one of effect interfaces');
         }
 
@@ -214,8 +218,8 @@ class Module extends \yii\base\Module
 
     public function getEffect($effectId)
     {
-        if(!isset($this->effects[$effectId])){
-            throw new Exception('Cant find effect '.print_r($effectId, true));
+        if (!isset($this->effects[$effectId])) {
+            throw new Exception('Cant find effect ' . print_r($effectId, true));
         }
 
         return $this->effects[$effectId];
@@ -236,13 +240,23 @@ class Module extends \yii\base\Module
 
         $this->urlManager = new UrlManager();
         $this->registerEffects();
+
+
+        $this->removeImageUrl = Url::toRoute([
+            '/' . $this->id . '/images/remove-image'
+        ]);
+        $this->setMainImageUrl = Url::toRoute([
+            '/' . $this->id . '/images/set-main-image'
+        ]);
+
     }
 
-    public function getPlaceHolder(){
+    public function getPlaceHolder()
+    {
 
-        if($this->placeHolderPath){
+        if ($this->placeHolderPath) {
             return new PlaceHolder();
-        }else{
+        } else {
             return null;
         }
     }
