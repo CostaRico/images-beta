@@ -35,11 +35,9 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
 
         $dirToRemove = $this->getModule()->getCachePath().DIRECTORY_SEPARATOR.$subDir;
 
-        if(preg_match('/'.preg_quote($this->modelName, '/').DIRECTORY_SEPARATOR, $dirToRemove)){
+        if(preg_match('#'.preg_quote($this->modelName, '#').'#', $dirToRemove)){
             BaseFileHelper::removeDirectory($dirToRemove);
-
         }
-
         return true;
     }
 
@@ -48,35 +46,28 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         return $this->effects;
     }
 
-    private function checkEffect($effectClassName)
+    public function effect($effectCode)
     {
-        if(class_implements($effectClassName, 'rico2\yii2images\inters\ImagickEffectInterface')){
-            if($this->getModule()->graphicsLibrary != 'Imagick'){
-                throw new \Exception('Effect class must implement Imagick Effect interface');
-            }
-        }elseif(class_implements($effectClassName, 'rico2\yii2images\inters\GDEffectInterface')){
-            if($this->getModule()->graphicsLibrary != 'GD'){
-                throw new \Exception('Effect class must implement GD Effect interface');
-            }
-        }else{
-            throw new \Exception('Effect class must implement one of effect interfaces');
-        }
-
-        return true;
-    }
-
-    public function effect($effectClassName)
-    {
+        $effectClassName = $this->getModule()->getEffect($effectCode);
         $effect = null;
-        if(class_implements($effectClassName, 'rico2\yii2images\inters\EffectsFactoryInterface')){
+        if(is_subclass_of($effectClassName, 'rico2\yii2images\inters\EffectsFactoryInterface')){
             $effectFactory = new $effectClassName;
-            $effect = $effectClassName->getEffect();
-        }elseif($this->checkEffect($effectClassName)){
+            $effect = $effectFactory->getEffect();
+        }elseif($this->getModule()->checkEffect($effectClassName)){
             $effect = new $effectClassName;
         }else{
             throw new \Exception('Error with effect');
         }
         $this->effects[] = $effect;
+        return $this;
+    }
+
+    public function restoreEffects($effects)
+    {
+        foreach($effects as $effect){
+            $effectClass = $this->getModule()->getEffect($effect);
+            $this->effect($effectClass);
+        }
     }
 
     public function setAsMain($isMain = true){
@@ -93,17 +84,21 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         return $this->getModule()->urlManager->getImageUrl($this, $size);
     }
 
+
+    public function getPathToSave($sizeString)
+    {
+        $cachePath = $this->getModule()->getCachePath();
+        $subDirPath = $this->getSubDur();
+        $fileExtension =  pathinfo($this->filePath, PATHINFO_EXTENSION);
+        $pathToSave = $cachePath.'/'.$subDirPath.'/'.$this->getModule()->urlManager->getImageIdentifer($this, $sizeString).'.'.$fileExtension;
+
+        return $pathToSave;
+    }
+
     public function getPath($size = false){
-        $urlSize = ($size) ? '_'.$size : '';
-        $base = $this->getModule()->getCachePath();
-        $sub = $this->getSubDur();
-
-        $origin = $this->getPathToOrigin();
-
-        $filePath = $base.DIRECTORY_SEPARATOR.
-            $sub.DIRECTORY_SEPARATOR.$this->urlAlias.$urlSize.'.'.pathinfo($origin, PATHINFO_EXTENSION);;
+        $filePath = $this->getPathToSave($size);
         if(!file_exists($filePath)){
-            $this->createVersion($origin, $size);
+            $this->createVersion($size);
 
             if(!file_exists($filePath)){
                 throw new \Exception('Problem with image creating.');
@@ -135,11 +130,7 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         if(!$size){
             throw new \Exception('Bad size..');
         }
-
-
-
         $sizes = $this->getSizes();
-
         $imageWidth = $sizes['width'];
         $imageHeight = $sizes['height'];
         $newSizes = [];
@@ -156,7 +147,7 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         return $newSizes;
     }
 
-    abstract public function createVersion($imagePath, $sizeString = false);
+    abstract public function createVersion($sizeString = false);
 
     protected function getSubDur(){
         return $this->modelName. 's/' . $this->modelName.$this->itemId;

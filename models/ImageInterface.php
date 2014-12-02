@@ -18,5 +18,5 @@ interface ImageInterface {
     public function getPathToOrigin();
     public function getSizes();
     public function getSizesWhen($sizeString);
-    public function createVersion($imagePath, $sizeString = false);
+    public function createVersion($sizeString = false);
 } 

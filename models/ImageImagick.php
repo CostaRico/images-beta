@@ -18,35 +18,20 @@ class ImageImagick  extends ImageAbstract implements ImageInterface {
         return $sizes;
     }
 
-    public function createVersion($imagePath, $sizeString = false)
+    public function createVersion($sizeString = false)
     {
         if(strlen($this->urlAlias)<1){
             throw new \Exception('Image without urlAlias!');
         }
-
-        $cachePath = $this->getModule()->getCachePath();
-        $subDirPath = $this->getSubDur();
-        $fileExtension =  pathinfo($this->filePath, PATHINFO_EXTENSION);
-
-        if($sizeString){
-            $sizePart = '_'.$sizeString;
-        }else{
-            $sizePart = '';
-        }
-
-        $pathToSave = $cachePath.'/'.$subDirPath.'/'.$this->urlAlias.$sizePart.'.'.$fileExtension;
-
-        BaseFileHelper::createDirectory(dirname($pathToSave), 0777, true);
-
-
         if($sizeString) {
             $size = $this->getModule()->parseSize($sizeString);
         }else{
             $size = false;
         }
+        $pathToSave = $this->getPathToSave($sizeString);
+        BaseFileHelper::createDirectory(dirname($pathToSave), 0777, true);
 
-        $image = new \Imagick($imagePath);
-        p($image);die;
+        $image = new \Imagick($this->getPathToOrigin());
         $image->setImageCompressionQuality(100);
 
         if($size){

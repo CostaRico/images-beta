@@ -8,5 +8,5 @@
 namespace rico2\yii2images\inters;
 
 interface GDEffectInterface {
-
+    public function getCode();
 }

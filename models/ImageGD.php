@@ -29,17 +29,7 @@ class ImageGD extends ImageAbstract implements ImageInterface
             throw new \Exception('Image without urlAlias!');
         }
 
-        $cachePath = $this->getModule()->getCachePath();
-        $subDirPath = $this->getSubDur();
-        $fileExtension = pathinfo($this->filePath, PATHINFO_EXTENSION);
-
-        if ($sizeString) {
-            $sizePart = '_' . $sizeString;
-        } else {
-            $sizePart = '';
-        }
-
-        $pathToSave = $cachePath . '/' . $subDirPath . '/' . $this->urlAlias . $sizePart . '.' . $fileExtension;
+        $pathToSave = $this->getPathToSave($sizeString);
 
         BaseFileHelper::createDirectory(dirname($pathToSave), 0777, true);
 

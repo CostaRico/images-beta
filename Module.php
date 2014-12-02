@@ -5,6 +5,7 @@ namespace rico2\yii2images;
 
 use rico2\yii2images\models\PlaceHolder;
 use rico2\yii2images\models\UrlManager;
+use SebastianBergmann\Exporter\Exception;
 use yii;
 use rico2\yii2images\models\Image;
 
@@ -17,6 +18,8 @@ class Module extends \yii\base\Module
 
     const IMAGE_BASE_CLASS = 'rico2\yii2images\models\ImageAbstract';
     const IMAGE_INTERFACE_CLASS = 'rico2\yii2images\models\ImageInterface';
+
+    public $placeHolderClass = 'rico2\yii2images\models\PlaceHolder';
 
     public $imagesStorePath = '@app/web/store';
 
@@ -31,6 +34,8 @@ class Module extends \yii\base\Module
     public $waterMark = false;
 
     public $urlManager = null;
+
+    public $effects = [];
 
     public $urlPrefix = 'yii2images';
     public $urlRules = [
@@ -183,6 +188,38 @@ class Module extends \yii\base\Module
         return ['alias' => $alias, 'size' => $size];
     }
 
+    private function registerEffects()
+    {
+        foreach($this->effects as $effect){
+            $this->checkEffect($effect);
+        }
+    }
+
+    public function checkEffect($effectClassName)
+    {
+        if(class_implements($effectClassName, 'rico2\yii2images\inters\ImagickEffectInterface')){
+            if($this->graphicsLibrary != 'Imagick'){
+                throw new \Exception('Effect class must implement Imagick Effect interface');
+            }
+        }elseif(class_implements($effectClassName, 'rico2\yii2images\inters\GDEffectInterface')){
+            if($this->graphicsLibrary != 'GD'){
+                throw new \Exception('Effect class must implement GD Effect interface');
+            }
+        }else{
+            throw new \Exception('Effect class must implement one of effect interfaces');
+        }
+
+        return true;
+    }
+
+    public function getEffect($effectId)
+    {
+        if(!isset($this->effects[$effectId])){
+            throw new Exception('Cant find effect '.print_r($effectId, true));
+        }
+
+        return $this->effects[$effectId];
+    }
 
     public function init()
     {
@@ -198,6 +235,7 @@ class Module extends \yii\base\Module
             throw new \Exception('Setup imagesStorePath and imagesCachePath images module properties!!!');
 
         $this->urlManager = new UrlManager();
+        $this->registerEffects();
     }
 
     public function getPlaceHolder(){

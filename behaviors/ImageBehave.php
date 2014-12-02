@@ -31,8 +31,6 @@ class ImageBehave extends Behavior
      */
     public $imageClass = null;
 
-
-
     /**
      *
      * Method copies image file to module store and creates db record.
@@ -115,9 +113,8 @@ class ImageBehave extends Behavior
 
         $dirToRemove = $cachePath . '/' . $subdir;
 
-        if (preg_match('/' . preg_quote($cachePath, '/') . '/', $dirToRemove)) {
+        if (preg_match('#' . preg_quote($cachePath, '#') . '#', $dirToRemove)) {
             BaseFileHelper::removeDirectory($dirToRemove);
-            //exec('rm -rf ' . $dirToRemove);
             return true;
         } else {
             return false;
@@ -136,7 +133,7 @@ class ImageBehave extends Behavior
         $imageClass = $this->getModule()->imageClass();
         $imageQuery = $imageClass::find()
             ->where($finder);
-        $imageQuery->orderBy(['isMain' => SORT_DESC, 'id' => SORT_ASC]);
+        $imageQuery->orderBy(['isMain' => SORT_DESC, 'number' => SORT_ASC]);
 
         $imageRecords = $imageQuery->all();
         if(!$imageRecords){
@@ -154,7 +151,9 @@ class ImageBehave extends Behavior
     {
         $imgs = $this->getImages();
         if(count($imgs)==1){
-            if($imgs[0] instanceof rico2\yii2images\models\PlaceHolder){
+            $img = $imgs[0];
+            $module = $this->getModule();
+            if($img instanceof $module->placeHolderClass){
                 return 0;
             }
         }
@@ -186,14 +185,14 @@ class ImageBehave extends Behavior
      */
     public function removeImages()
     {
-        $images = $this->owner->getImages();
-        if (count($images) < 1) {
+        if($this->owner->getImagesCount()==0){
             return true;
-        } else {
-            foreach ($images as $image) {
-                $this->owner->removeImage($image);
-            }
         }
+        $images = $this->owner->getImages();
+        foreach ($images as $image) {
+            $this->owner->removeImage($image);
+        }
+        return true;
     }
 
 
@@ -231,39 +230,6 @@ class ImageBehave extends Behavior
     }
 
 
-
-    /** Make string part of image's url
-     * @return string
-     * @throws \Exception
-     */
-    /*private function getAliasString()
-    {
-        if ($this->createAliasMethod) {
-            $string = $this->owner->{$this->createAliasMethod}();
-            if (!is_string($string)) {
-                throw new \Exception("Image's url must be string!");
-            } else {
-                return $string;
-            }
-
-        } else {
-            return substr(md5(microtime()), 0, 10);
-        }
-    }*/
-
-
-    /**
-     *
-     * Обновить алиасы для картинок
-     * Зачистить кэш
-     */
-    /*private function getAlias()
-    {
-        $aliasWords = $this->getAliasString();
-        $imagesCount = count($this->owner->getImages());
-
-        return $aliasWords . '-' . intval($imagesCount + 1);
-    }*/
 
     /**
      * String part of image url

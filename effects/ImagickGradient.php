@@ -7,11 +7,27 @@
  */
 
 namespace rico2\yii2images\effects;
+use rico2\yii2images\inters\ImagickEffectInterface;
 
 
-class ImagickGradient {
-    public function apply()
+class ImagickGradient implements ImagickEffectInterface{
+
+    public $coverPercent = 30;
+    public $fromColor = 'transparent';
+    public $toColor = 'black';
+
+    public function apply(\Imagick $image)
     {
+        $gradient = new \Imagick();
 
+        $gradient->newPseudoImage($image->getImageWidth(), $image->getImageHeight()*$this->coverPercent/100, "gradient:".$this->fromColor."-".$this->toColor);
+        $image->compositeImage($gradient, \Imagick::COMPOSITE_OVER, 0, $image->getImageHeight()-$gradient->getImageHeight()  );
+
+        return $image;
+    }
+
+    public function getCode()
+    {
+        return 'SG';
     }
 }

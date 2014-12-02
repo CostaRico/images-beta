@@ -11,6 +11,9 @@ use rico2\yii2images\ModuleTrait;
 use yii\helpers\Url;
 
 class UrlManager {
+
+    const EFFECTS_PREFIX = 'ef';
+
     use ModuleTrait;
     public static function generateUrl(ImageAbstract $image){
         /**
@@ -41,12 +44,12 @@ class UrlManager {
          */
     }
 
-    public function getImageUrl(ImageAbstract $image, $size = null){
+    public function getImageIdentifer(ImageAbstract $image, $size = null){
         $alias = $image->urlAlias;
         $num = $image->number;
         $effectsString = '';
         foreach ($image->getEffects() as $effect) {
-            $effectsString .= $effect->getCode().'_';
+            $effectsString .= self::EFFECTS_PREFIX.$effect->getCode().'_';
         }
         $effectsString = substr($effectsString, 0, -1);
 
@@ -61,6 +64,7 @@ class UrlManager {
             $parts[] = $num;
         }
 
+        //If defined only width without "x"
         if($size){
             if($num && !preg_match('/x/', $size)){
                 $size = $size.'x';
@@ -71,8 +75,12 @@ class UrlManager {
         if($effectsString){
             $parts[] =$effectsString;
         }
-        $imageIdPart = join('_', $parts);
+        return join('_', $parts);
+    }
 
+    public function getImageUrl(ImageAbstract $image, $size = null){
+
+        $imageIdPart = $this->getImageIdentifer($image, $size = null);
         $url = Url::toRoute([
             '/'.$this->getModule()->id.'/images/image-by-alias',
             'alias' => $imageIdPart,
@@ -104,10 +112,14 @@ class UrlManager {
         if(preg_match('/\./', $imagePathOfUrl)){
             $code = preg_replace('/\..*$/', '', $code);
         }
-        $effects = null;
+        //$effects = null;
+        $effectsArray = [];
         if(preg_match('/ef.*$/', $code, $matches)){
-            $effects = $matches[0];
-            $code = substr($code, 0, -strlen('_'.$effects));
+            $effects = str_replace(self::EFFECTS_PREFIX, '', $matches[0]);
+            //p($effects);
+            $effectsArray = explode('_', $effects);
+
+            $code = substr($code, 0, -strlen('_'.self::EFFECTS_PREFIX.$effects));
         }
 
         //alias string and size
@@ -139,7 +151,7 @@ class UrlManager {
             'alias' => $aliasString,
             'num' => $imageNum,
             'size' => $size,
-            'effects' => $effects
+            'effects' => $effectsArray
         ];
 
         return $result;
