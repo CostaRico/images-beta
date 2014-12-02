@@ -20,12 +20,16 @@ class ImagesController extends Controller
 
     public function actionSetMainImage($imageId)
     {
-
+        $imageClass = $this->getModule()->imageClass();
+        $image = $imageClass::findOne($imageId);
+        $image->setAsMain();
     }
 
     public function actionRemoveImage($imageId)
     {
-
+        $imageClass = $this->getModule()->imageClass();
+        $image = $imageClass::findOne($imageId);
+        $image->removeSelf();
     }
 
     public function actionIndex()

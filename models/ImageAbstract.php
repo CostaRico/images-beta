@@ -71,6 +71,17 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
     }
 
     public function setAsMain($isMain = true){
+        $imageClass = $this->getModule()->imageClass();
+        $itemImages = $imageClass::find()->where([
+            'itemId'=>$this->itemId,
+            'modelName'=>$this->modelName
+        ])->all();
+
+        foreach($itemImages as $img){
+            $img->isMain = 0;
+            $img->save();
+        }
+
         $this->isMain = 1;
         $this->save();
     }
@@ -152,7 +163,22 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
     protected function getSubDur(){
         return $this->modelName. 's/' . $this->modelName.$this->itemId;
     }
-        
+
+
+    public function removeSelf()
+    {
+        $this->clearCache();
+
+        $storePath = $this->getModule()->getStorePath();
+
+        $fileToRemove = $storePath . DIRECTORY_SEPARATOR . $this->filePath;
+        if (preg_match('@\.@', $fileToRemove) and is_file($fileToRemove)) {
+            unlink($fileToRemove);
+        }
+        $this->delete();
+    }
+
+
     /** ----========= GENERATED =========-----*/
     /**
      * @inheritdoc

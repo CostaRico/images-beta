@@ -8,7 +8,6 @@ Asset::register($this);
 
 $this->registerJs(
     '
-   // var ricoRemoveImagesUrl = '.$urls['addImage'].';
     var ricoRemoveImagesUrl = \''.$urls['removeImage'].'\';
     var ricoSetMainUrl = \''.$urls['setMain'].'\';
     ', $this::POS_BEGIN
