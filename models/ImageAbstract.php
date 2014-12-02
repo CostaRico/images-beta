@@ -10,6 +10,7 @@
  * @property integer $isMain
  * @property string $modelName
  * @property string $urlAlias
+ * @property integer $number
  */
 
 namespace rico2\yii2images\models;
@@ -19,12 +20,15 @@ use yii\base\Exception;
 use yii\helpers\Url;
 use yii\helpers\BaseFileHelper;
 use \rico2\yii2images\ModuleTrait;
+use rico2\yii2images\models\UrlManager;
 
 
 
 abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterface
 {
     use ModuleTrait;
+
+    protected $effects = [];
 
     public function clearCache(){
         $subDir = $this->getSubDur();
@@ -39,6 +43,42 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         return true;
     }
 
+    public function getEffects()
+    {
+        return $this->effects;
+    }
+
+    private function checkEffect($effectClassName)
+    {
+        if(class_implements($effectClassName, 'rico2\yii2images\inters\ImagickEffectInterface')){
+            if($this->getModule()->graphicsLibrary != 'Imagick'){
+                throw new \Exception('Effect class must implement Imagick Effect interface');
+            }
+        }elseif(class_implements($effectClassName, 'rico2\yii2images\inters\GDEffectInterface')){
+            if($this->getModule()->graphicsLibrary != 'GD'){
+                throw new \Exception('Effect class must implement GD Effect interface');
+            }
+        }else{
+            throw new \Exception('Effect class must implement one of effect interfaces');
+        }
+
+        return true;
+    }
+
+    public function effect($effectClassName)
+    {
+        $effect = null;
+        if(class_implements($effectClassName, 'rico2\yii2images\inters\EffectsFactoryInterface')){
+            $effectFactory = new $effectClassName;
+            $effect = $effectClassName->getEffect();
+        }elseif($this->checkEffect($effectClassName)){
+            $effect = new $effectClassName;
+        }else{
+            throw new \Exception('Error with effect');
+        }
+        $this->effects[] = $effect;
+    }
+
     public function setAsMain($isMain = true){
         $this->isMain = 1;
         $this->save();
@@ -49,15 +89,8 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         return $ext;
     }
 
-    public function getUrl($size = false){
-        $urlSize = ($size) ? '_'.$size : '';
-        $url = Url::toRoute([
-            '/'.$this->getModule()->id.'/images/image-by-item-and-alias',
-            'item' => $this->modelName.$this->itemId,
-            'dirtyAlias' =>  $this->urlAlias.$urlSize.'.'.$this->getExtension()
-        ]);
-
-        return $url;
+    public function getUrl($size = null){
+        return $this->getModule()->urlManager->getImageUrl($this, $size);
     }
 
     public function getPath($size = false){
@@ -145,7 +178,7 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
     {
         return [
             [['filePath', 'itemId', 'modelName', 'urlAlias'], 'required'],
-            [['itemId', 'isMain'], 'integer'],
+            [['itemId', 'isMain', 'number'], 'integer'],
             [['filePath', 'urlAlias'], 'string', 'max' => 400],
             [['modelName'], 'string', 'max' => 150]
         ];
@@ -163,6 +196,7 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
             'isMain' => 'Is Main',
             'modelName' => 'Model Name',
             'urlAlias' => 'Url Alias',
+            'number' => 'number',
         ];
     }
 }

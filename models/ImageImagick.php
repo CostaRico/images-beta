@@ -46,6 +46,7 @@ class ImageImagick  extends ImageAbstract implements ImageInterface {
         }
 
         $image = new \Imagick($imagePath);
+        p($image);die;
         $image->setImageCompressionQuality(100);
 
         if($size){
@@ -59,7 +60,9 @@ class ImageImagick  extends ImageAbstract implements ImageInterface {
                 throw new \Exception('Something wrong with this->module->parseSize($sizeString)');
             }
         }
-
+        foreach ($this->effects as $effect) {
+            $image = $effect->apply($image);
+        }
         $image->writeImage($pathToSave);
 
         return $image;

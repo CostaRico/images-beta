@@ -59,4 +59,15 @@ class ImagesController extends Controller
         }
 
     }
+
+
+    public function actionImageByAlias($alias, $extension)
+    {
+        $parsedAlias = $this->getModule()->urlManager->parseImageUrl($alias);
+        $imgClass = $this->getModule()->imageClass();
+        $image = $imgClass::find()->where(['urlAlias'=>$parsedAlias['alias'], 'number'=>$parsedAlias['num']])->one();
+//        header('Content-Type: image/jpg');
+        echo $image->getContent();
+    }
+
 }

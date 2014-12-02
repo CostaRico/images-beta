@@ -4,6 +4,7 @@ namespace rico2\yii2images;
 
 
 use rico2\yii2images\models\PlaceHolder;
+use rico2\yii2images\models\UrlManager;
 use yii;
 use rico2\yii2images\models\Image;
 
@@ -11,7 +12,7 @@ class Module extends \yii\base\Module
 {
     public $imageClasses = [
         'GD' => 'rico2\yii2images\models\ImageGD',
-        'imagick' => 'rico2\yii2images\models\ImageImagick'
+        'Imagick' => 'rico2\yii2images\models\ImageImagick'
     ];
 
     const IMAGE_BASE_CLASS = 'rico2\yii2images\models\ImageAbstract';
@@ -29,6 +30,12 @@ class Module extends \yii\base\Module
 
     public $waterMark = false;
 
+    public $urlManager = null;
+
+    public $urlPrefix = 'yii2images';
+    public $urlRules = [
+        '<alias>.<extension>' => 'images/image-by-alias'
+    ];
 
 
     public function imageClass()
@@ -190,6 +197,7 @@ class Module extends \yii\base\Module
         )
             throw new \Exception('Setup imagesStorePath and imagesCachePath images module properties!!!');
 
+        $this->urlManager = new UrlManager();
     }
 
     public function getPlaceHolder(){

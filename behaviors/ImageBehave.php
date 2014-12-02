@@ -24,7 +24,7 @@ class ImageBehave extends Behavior
 {
 
     use ModuleTrait;
-    public $createAliasMethod = false;
+    public $aliasSourceMethod = null;
 
     /**
      * @var ActiveRecord|null Model class, which will be used for storing image data in db, if not set default class(models/Image) will be used
@@ -77,10 +77,8 @@ class ImageBehave extends Behavior
         $image->itemId = $this->owner->id;
         $image->filePath = $pictureSubDir . '/' . $pictureFileName;
         $image->modelName = $this->getModule()->getShortClass($this->owner);
-
-
-        $image->urlAlias = $this->getAlias($image);
-
+        $image->urlAlias = $this->getAliasForImage($image);
+        $image->number = $this->getImagesCount()+1;
         $image->save();
         if (count($image->getErrors()) > 0) {
             $ar = array_shift($image->getErrors());
@@ -142,12 +140,27 @@ class ImageBehave extends Behavior
 
         $imageRecords = $imageQuery->all();
         if(!$imageRecords){
-            return [$this->getModule()->getPlaceHolder()];
+            if($this->getModule()->placeHolderPath){
+                return [$this->getModule()->getPlaceHolder()];
+            }else{
+                return [];
+            }
         }
         return $imageRecords;
     }
 
 
+    public function getImagesCount()
+    {
+        $imgs = $this->getImages();
+        if(count($imgs)==1){
+            if($imgs[0] instanceof rico2\yii2images\models\PlaceHolder){
+                return 0;
+            }
+        }
+
+        return count($imgs);
+    }
     /**
      * returns main model image
      * @return array|null|ActiveRecord
@@ -223,7 +236,7 @@ class ImageBehave extends Behavior
      * @return string
      * @throws \Exception
      */
-    private function getAliasString()
+    /*private function getAliasString()
     {
         if ($this->createAliasMethod) {
             $string = $this->owner->{$this->createAliasMethod}();
@@ -236,7 +249,7 @@ class ImageBehave extends Behavior
         } else {
             return substr(md5(microtime()), 0, 10);
         }
-    }
+    }*/
 
 
     /**
@@ -244,12 +257,28 @@ class ImageBehave extends Behavior
      * Обновить алиасы для картинок
      * Зачистить кэш
      */
-    private function getAlias()
+    /*private function getAlias()
     {
         $aliasWords = $this->getAliasString();
         $imagesCount = count($this->owner->getImages());
 
         return $aliasWords . '-' . intval($imagesCount + 1);
+    }*/
+
+    /**
+     * String part of image url
+     */
+    private function getAliasForImage(){
+        if ($this->aliasSourceMethod) {
+            $string = $this->owner->{$this->aliasSourceMethod}();
+            if (!is_string($string)) {
+                throw new \Exception("Image's alias must be string!");
+            } else {
+                return $string;
+            }
+        } else {
+            return substr(md5(microtime()), 0, 10);
+        }
     }
 
 
