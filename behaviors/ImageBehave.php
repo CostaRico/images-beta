@@ -191,25 +191,6 @@ class ImageBehave extends Behavior
     }
 
 
-    /**
-     *
-     * removes concrete model's image
-     * @param Image $img
-     * @throws \Exception
-     */
-    /*public function removeImage($img)
-    {
-        $img->clearCache();
-
-        $storePath = $this->getModule()->getStorePath();
-
-        $fileToRemove = $storePath . DIRECTORY_SEPARATOR . $img->filePath;
-        if (preg_match('@\.@', $fileToRemove) and is_file($fileToRemove)) {
-            unlink($fileToRemove);
-        }
-        $img->delete();
-    }*/
-
     private function getImagesFinder($additionWhere = false)
     {
         $base = [

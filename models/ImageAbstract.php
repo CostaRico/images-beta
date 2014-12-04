@@ -27,6 +27,7 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
 
     protected $effects = [];
 
+    protected $effectsFactoryInterfaceClass = null;
 
     public function init()
     {
@@ -34,6 +35,8 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         if($this->getModule()->waterMark){
             $this->effect('waterMark');
         }
+
+        $this->effectsFactoryInterfaceClass = $this->getModule()->effectsFactoryInterfaceClass;
     }
 
     public function disableWatermark()
@@ -63,7 +66,7 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
     {
         $effectClassName = $this->getModule()->getEffect($effectCode);//p($effectClassName);die;
         $effect = null;
-        if(is_subclass_of($effectClassName, 'rico2\yii2images\inters\EffectsFactoryInterface')){
+        if(is_subclass_of($effectClassName, $this->effectsFactoryInterfaceClass)){
             $effectFactory = new $effectClassName;
             $effect = $effectFactory->getEffect();
         }elseif($this->getModule()->checkEffect($effectClassName)){

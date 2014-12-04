@@ -23,8 +23,6 @@ class Module extends \yii\base\Module
         'Imagick' => 'rico2\yii2images\effects\WaterMarkImagick'
     ];
 
-    const MODULE_NAMESPACE = 'rico2\yii2images';
-
     const IMAGE_BASE_CLASS = 'rico2\yii2images\models\ImageAbstract';
     const IMAGE_INTERFACE_CLASS = 'rico2\yii2images\models\ImageInterface';
 
@@ -37,6 +35,13 @@ class Module extends \yii\base\Module
     public $graphicsLibrary = 'GD';
 
     public $controllerNamespace = 'rico2\yii2images\controllers';
+
+    public $effectsFactoryInterfaceClass = 'rico2\yii2images\inters\EffectsFactoryInterface';
+
+    public $effectInterfaceClasses = null;
+
+    const GD_ID = 'GD';
+    const IMAGICK_ID = 'Imagick';
 
     public $placeHolderPath;
 
@@ -53,6 +58,39 @@ class Module extends \yii\base\Module
         '<alias>.<extension>' => 'images/image-by-alias'
     ];
 
+
+    public function init()
+    {
+        parent::init();
+        if (!$this->imagesStorePath
+            or
+            !$this->imagesCachePath
+            or
+            $this->imagesStorePath == '@app'
+            or
+            $this->imagesCachePath == '@app'
+        )
+            throw new \Exception('Setup imagesStorePath and imagesCachePath images module properties!!!');
+
+        $this->urlManager = new UrlManager();
+        $this->registerEffects();
+
+
+        $this->removeImageUrl = Url::toRoute([
+            '/' . $this->id . '/images/remove-image'
+        ]);
+        $this->setMainImageUrl = Url::toRoute([
+            '/' . $this->id . '/images/set-main-image'
+        ]);
+
+        $this->effects['waterMark'] = $this->waterMarkClasses[$this->graphicsLibrary];
+
+        $this->effectInterfaceClasses = [
+            self::GD_ID => 'rico2\yii2images\inters\GDEffectInterface',
+            self::IMAGICK_ID => 'rico2\yii2images\inters\ImagickEffectInterface'
+        ];
+
+    }
 
     public function imageClass()
     {
@@ -210,12 +248,12 @@ class Module extends \yii\base\Module
 
     public function checkEffect($effectClassName)
     {
-        if (class_implements($effectClassName, 'rico2\yii2images\inters\ImagickEffectInterface')) {
-            if ($this->graphicsLibrary != 'Imagick') {
+        if (class_implements($effectClassName, $this->effectInterfaceClasses[self::IMAGICK_ID])) {
+            if ($this->graphicsLibrary != self::IMAGICK_ID) {
                 throw new \Exception('Effect class must implement Imagick Effect interface');
             }
-        } elseif (class_implements($effectClassName, 'rico2\yii2images\inters\GDEffectInterface')) {
-            if ($this->graphicsLibrary != 'GD') {
+        } elseif (class_implements($effectClassName, $this->effectInterfaceClasses[self::GD_ID])) {
+            if ($this->graphicsLibrary != self::GD_ID) {
                 throw new \Exception('Effect class must implement GD Effect interface');
             }
         } else {
@@ -234,33 +272,7 @@ class Module extends \yii\base\Module
         return $this->effects[$effectId];
     }
 
-    public function init()
-    {
-        parent::init();
-        if (!$this->imagesStorePath
-            or
-            !$this->imagesCachePath
-            or
-            $this->imagesStorePath == '@app'
-            or
-            $this->imagesCachePath == '@app'
-        )
-            throw new \Exception('Setup imagesStorePath and imagesCachePath images module properties!!!');
 
-        $this->urlManager = new UrlManager();
-        $this->registerEffects();
-
-
-        $this->removeImageUrl = Url::toRoute([
-            '/' . $this->id . '/images/remove-image'
-        ]);
-        $this->setMainImageUrl = Url::toRoute([
-            '/' . $this->id . '/images/set-main-image'
-        ]);
-
-        $this->effects['waterMark'] = $this->waterMarkClasses[$this->graphicsLibrary];
-
-    }
 
     public function getPlaceHolder()
     {
@@ -269,7 +281,7 @@ class Module extends \yii\base\Module
             if(!file_exists(Yii::getAlias($this->placeHolderPath))){
                 throw new \Exception('PlaceHolder property defined, but placeholder file nor exists!!!');
             }
-            $placeHolderClass = self::MODULE_NAMESPACE.'\models\PlaceHolder'.$this->graphicsLibrary;
+            $placeHolderClass = 'rico2\yii2images\models\PlaceHolder'.$this->graphicsLibrary;
             return new $placeHolderClass;
         } else {
             return null;
