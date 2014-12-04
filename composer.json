@@ -31,6 +31,6 @@
         }
     },
     "extra": {
-        "bootstrap": "rico\\yii2images\\Bootstrap"
+        "bootstrap": "rico2\\yii2images\\Bootstrap"
     }
 }
