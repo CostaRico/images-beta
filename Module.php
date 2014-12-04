@@ -18,6 +18,11 @@ class Module extends \yii\base\Module
         'Imagick' => 'rico2\yii2images\models\ImageImagick'
     ];
 
+    public $waterMarkClasses = [
+        'GD' => 'rico2\yii2images\effects\WaterMarkGD',
+        'Imagick' => 'rico2\yii2images\effects\WaterMarkImagick'
+    ];
+
     const MODULE_NAMESPACE = 'rico2\yii2images';
 
     const IMAGE_BASE_CLASS = 'rico2\yii2images\models\ImageAbstract';
@@ -197,7 +202,9 @@ class Module extends \yii\base\Module
     private function registerEffects()
     {
         foreach ($this->effects as $effect) {
-            $this->checkEffect($effect);
+            if($this->checkEffect($effect)){
+                $this->effects[$effect::getCode()] = $effect;
+            }
         }
     }
 
@@ -250,6 +257,8 @@ class Module extends \yii\base\Module
         $this->setMainImageUrl = Url::toRoute([
             '/' . $this->id . '/images/set-main-image'
         ]);
+
+        $this->effects['waterMark'] = $this->waterMarkClasses[$this->graphicsLibrary];
 
     }
 

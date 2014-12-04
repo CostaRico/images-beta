@@ -88,7 +88,7 @@ class ImageBehave extends Behavior
         $img = $this->owner->getImage();
         //If main image not exists
         if(
-            is_object($img) && get_class($img)=='rico2\yii2images\models\PlaceHolder'
+            is_object($img) && $img->isPlaceHolder()
             or
             $img == null
             or

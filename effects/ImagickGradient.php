@@ -10,9 +10,9 @@ namespace rico2\yii2images\effects;
 use rico2\yii2images\inters\ImagickEffectInterface;
 
 
-class ImagickGradient implements ImagickEffectInterface{
+class ImagickGradient extends EffectAbstract implements ImagickEffectInterface{
 
-    public $coverPercent = 30;
+    public $coverPercent = 40;
     public $fromColor = 'transparent';
     public $toColor = 'black';
 
@@ -26,7 +26,7 @@ class ImagickGradient implements ImagickEffectInterface{
         return $image;
     }
 
-    public function getCode()
+    public static function getCode()
     {
         return 'SG';
     }

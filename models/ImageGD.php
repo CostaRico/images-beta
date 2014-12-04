@@ -57,9 +57,8 @@ class ImageGD extends ImageAbstract implements ImageInterface
             }
         }
 
-        foreach ($this->effects as $effect) {
-            $image = $effect->apply($image);
-        }
+        $this->applyEffects($image);
+
 
 
         $image->save($pathToSave, 100);

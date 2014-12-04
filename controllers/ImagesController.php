@@ -52,8 +52,8 @@ class ImagesController extends Controller
         if(!$image){
             $image = $this->getModule()->getPlaceHolder();
         }
-        //$image->clearCache();
-        $image->restoreEffects($parsedAlias['effects']);
+        $image->clearCache();
+        $image->restoreEffects($parsedAlias['effects'])->disableWatermark();
         //p($image->getContent());die;
         header('Content-Type: image/jpg');
         echo $image->getContent();

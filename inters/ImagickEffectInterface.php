@@ -8,6 +8,7 @@
 namespace rico2\yii2images\inters;
 
 interface ImagickEffectInterface {
-    public function getCode();
+    public static function getCode();
     public function apply(\Imagick $image);
+    public function disable();
 }

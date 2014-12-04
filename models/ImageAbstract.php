@@ -27,6 +27,22 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
 
     protected $effects = [];
 
+
+    public function init()
+    {
+        parent::find();
+        if($this->getModule()->waterMark){
+            $this->effect('waterMark');
+        }
+    }
+
+    public function disableWatermark()
+    {
+        if(isset($this->effects['waterMark'])){
+            $this->effects['waterMark']->disable();
+        }
+    }
+
     public function clearCache(){
         $subDir = $this->getSubDur();
 
@@ -45,7 +61,7 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
 
     public function effect($effectCode)
     {
-        $effectClassName = $this->getModule()->getEffect($effectCode);
+        $effectClassName = $this->getModule()->getEffect($effectCode);//p($effectClassName);die;
         $effect = null;
         if(is_subclass_of($effectClassName, 'rico2\yii2images\inters\EffectsFactoryInterface')){
             $effectFactory = new $effectClassName;
@@ -55,16 +71,18 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         }else{
             throw new \Exception('Error with effect');
         }
-        $this->effects[] = $effect;
+        $this->effects[$effectCode] = $effect;
         return $this;
     }
 
     public function restoreEffects($effects)
     {
         foreach($effects as $effect){
-            $effectClass = $this->getModule()->getEffect($effect);
-            $this->effect($effectClass);
+            //$effectClass = $this->getModule()->getEffect($effect);
+            $this->effect($effect);
         }
+
+        return $this;
     }
 
     public function setAsMain($isMain = true){
@@ -179,6 +197,16 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
         $this->delete();
     }
 
+    public function applyEffects($image)
+    {
+        foreach ($this->effects as $effect) {
+            if($effect->isEnabled){
+                $image = $effect->apply($image);
+            }
+        }
+
+        return $image;
+    }
 
     /** ----========= GENERATED =========-----*/
     /**

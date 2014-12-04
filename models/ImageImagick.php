@@ -45,9 +45,9 @@ class ImageImagick  extends ImageAbstract implements ImageInterface {
                 throw new \Exception('Something wrong with this->module->parseSize($sizeString)');
             }
         }
-        foreach ($this->effects as $effect) {
-            $image = $effect->apply($image);
-        }
+
+        $this->applyEffects($image);
+
         $image->writeImage($pathToSave);
 
         return $image;
