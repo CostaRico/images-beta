@@ -48,6 +48,10 @@ class ImagesController extends Controller
         $parsedAlias = $this->getModule()->urlManager->parseImageUrl($alias);
         $imgClass = $this->getModule()->imageClass();
         $image = $imgClass::find()->where(['urlAlias'=>$parsedAlias['alias'], 'number'=>$parsedAlias['num']])->one();
+
+        if(!$image){
+            $image = $this->getModule()->getPlaceHolder();
+        }
         //$image->clearCache();
         $image->restoreEffects($parsedAlias['effects']);
         //p($image->getContent());die;

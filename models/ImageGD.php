@@ -23,7 +23,7 @@ class ImageGD extends ImageAbstract implements ImageInterface
         return $sizes;
     }
 
-    public function createVersion($imagePath, $sizeString = false)
+    public function createVersion($sizeString = false)
     {
         if (strlen($this->urlAlias) < 1) {
             throw new \Exception('Image without urlAlias!');
@@ -41,7 +41,7 @@ class ImageGD extends ImageAbstract implements ImageInterface
         }
 
 
-        $image = new \abeautifulsite\SimpleImage($imagePath);
+        $image = new \abeautifulsite\SimpleImage($this->getPathToOrigin());
 
 
         if ($size) {

@@ -16,11 +16,8 @@
 namespace rico2\yii2images\models;
 
 use Yii;
-use yii\base\Exception;
-use yii\helpers\Url;
 use yii\helpers\BaseFileHelper;
 use \rico2\yii2images\ModuleTrait;
-use rico2\yii2images\models\UrlManager;
 
 
 
@@ -165,6 +162,10 @@ abstract class ImageAbstract extends \yii\db\ActiveRecord implements ImageInterf
     }
 
 
+    public function isPlaceHolder()
+    {
+        return false;
+    }
     public function removeSelf()
     {
         $this->clearCache();

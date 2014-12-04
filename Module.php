@@ -3,11 +3,11 @@
 namespace rico2\yii2images;
 
 
-use rico2\yii2images\models\PlaceHolder;
+use rico2\yii2images\models\PlaceHolderGD;
+use rico2\yii2images\models\PlaceHolderImagick;
 use rico2\yii2images\models\UrlManager;
 use SebastianBergmann\Exporter\Exception;
 use yii;
-use rico2\yii2images\models\Image;
 use yii\helpers\Url;
 
 
@@ -17,6 +17,8 @@ class Module extends \yii\base\Module
         'GD' => 'rico2\yii2images\models\ImageGD',
         'Imagick' => 'rico2\yii2images\models\ImageImagick'
     ];
+
+    const MODULE_NAMESPACE = 'rico2\yii2images';
 
     const IMAGE_BASE_CLASS = 'rico2\yii2images\models\ImageAbstract';
     const IMAGE_INTERFACE_CLASS = 'rico2\yii2images\models\ImageInterface';
@@ -255,7 +257,11 @@ class Module extends \yii\base\Module
     {
 
         if ($this->placeHolderPath) {
-            return new PlaceHolder();
+            if(!file_exists(Yii::getAlias($this->placeHolderPath))){
+                throw new \Exception('PlaceHolder property defined, but placeholder file nor exists!!!');
+            }
+            $placeHolderClass = self::MODULE_NAMESPACE.'\models\PlaceHolder'.$this->graphicsLibrary;
+            return new $placeHolderClass;
         } else {
             return null;
         }

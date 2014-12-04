@@ -108,17 +108,12 @@ class ImageBehave extends Behavior
      */
     public function clearImagesCache()
     {
-        $cachePath = $this->getModule()->getCachePath();
-        $subdir = $this->getModule()->getModelSubDir($this->owner);
-
-        $dirToRemove = $cachePath . '/' . $subdir;
-
-        if (preg_match('#' . preg_quote($cachePath, '#') . '#', $dirToRemove)) {
-            BaseFileHelper::removeDirectory($dirToRemove);
-            return true;
-        } else {
-            return false;
+        if($this->owner->getImagesCount()>0){
+            foreach($this->owner->getImages() as $img){
+                $img->clearCache();
+            }
         }
+        return true;
     }
 
 
@@ -153,7 +148,7 @@ class ImageBehave extends Behavior
         if(count($imgs)==1){
             $img = $imgs[0];
             $module = $this->getModule();
-            if($img instanceof $module->placeHolderClass){
+            if($img->isPlaceHolder()){
                 return 0;
             }
         }
@@ -202,7 +197,7 @@ class ImageBehave extends Behavior
      * @param Image $img
      * @throws \Exception
      */
-    public function removeImage($img)
+    /*public function removeImage($img)
     {
         $img->clearCache();
 
@@ -213,7 +208,7 @@ class ImageBehave extends Behavior
             unlink($fileToRemove);
         }
         $img->delete();
-    }
+    }*/
 
     private function getImagesFinder($additionWhere = false)
     {
@@ -230,11 +225,10 @@ class ImageBehave extends Behavior
     }
 
 
-
     /**
      * String part of image url
      */
-    private function getAliasForImage(){
+    protected function getAliasForImage(){
         if ($this->aliasSourceMethod) {
             $string = $this->owner->{$this->aliasSourceMethod}();
             if($string==''){

@@ -29,5 +29,9 @@
         "psr-4": {
             "rico2\\yii2images\\": ""
         }
+    },
+    "extra": {
+        "bootstrap": "rico\\yii2images\\Bootstrap"
+        }
     }
 }
