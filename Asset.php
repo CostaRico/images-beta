@@ -11,7 +11,7 @@ use yii\web\AssetBundle;
 
 
 class Asset extends AssetBundle{
-    public $sourcePath = '@app/vendor/costa-rico/yii2-images2/widgets/views';
+    public $sourcePath = '@app/vendor/costa-rico/yii2-images/widgets/views';
     public $js = [
         'imagesLoader.js'
     ];
