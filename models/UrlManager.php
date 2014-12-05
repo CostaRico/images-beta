@@ -49,10 +49,15 @@ class UrlManager {
         $num = $image->number;
         $effectsString = '';
         foreach ($image->getEffects() as $effect) {
-            $effectsString .= self::EFFECTS_PREFIX.$effect->getCode().'_';
+            if(strlen($effect->getCode())>0){
+                $effectsString .= $effect->getCode().'_';
+            }
         }
-        $effectsString = substr($effectsString, 0, -1);
-
+        if(strlen($effectsString)>0){
+            $effectsString = self::EFFECTS_PREFIX.$effectsString;
+            $effectsString = substr($effectsString, 0, -1);
+        }
+        
         $parts = [];
         if(!$alias){
             throw new \Exception('Bad alias');
