@@ -68,7 +68,6 @@ class UrlManager {
         if($num!=1){
             $parts[] = $num;
         }
-
         //If defined only width without "x"
         if($size){
             if($num && !preg_match('/x/', $size)){
@@ -76,7 +75,6 @@ class UrlManager {
             }
             $parts[] = $size;
         }
-
         if($effectsString){
             $parts[] =$effectsString;
         }
@@ -84,8 +82,7 @@ class UrlManager {
     }
 
     public function getImageUrl(ImageAbstract $image, $size = null){
-
-        $imageIdPart = $this->getImageIdentifer($image, $size = null);
+        $imageIdPart = $this->getImageIdentifer($image, $size);
         $url = Url::toRoute([
             '/'.$this->getModule()->id.'/images/image-by-alias',
             'alias' => $imageIdPart,

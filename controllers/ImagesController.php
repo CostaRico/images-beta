@@ -48,7 +48,6 @@ class ImagesController extends Controller
         $parsedAlias = $this->getModule()->urlManager->parseImageUrl($alias);
         $imgClass = $this->getModule()->imageClass();
         $image = $imgClass::find()->where(['urlAlias'=>$parsedAlias['alias'], 'number'=>$parsedAlias['num']])->one();
-
         if(!$image){
             $image = $this->getModule()->getPlaceHolder();
         }
@@ -56,7 +55,7 @@ class ImagesController extends Controller
         $image->restoreEffects($parsedAlias['effects'])->disableWatermark();
         //p($image->getContent());die;
         header('Content-Type: image/jpg');
-        echo $image->getContent();
+        echo $image->getContent($parsedAlias['size']);
     }
 
     public function actionImageByAliasW($alias, $extension)
@@ -72,7 +71,7 @@ class ImagesController extends Controller
         $image->restoreEffects($parsedAlias['effects'])->disableWatermark();
         //p($image->getContent());die;
         header('Content-Type: image/jpg');
-        echo $image->getContent();
+        echo $image->getContent($parsedAlias['size']);
     }
 
 }
