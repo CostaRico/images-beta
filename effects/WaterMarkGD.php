@@ -6,7 +6,7 @@
  * Time: 18:25
  */
 
-namespace rico2\yii2images\effects;
+namespace rico\yii2images\effects;
 
 
 class WaterMarkGD {

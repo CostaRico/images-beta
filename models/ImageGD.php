@@ -6,7 +6,7 @@
  * Time: 18:32
  */
 
-namespace rico2\yii2images\models;
+namespace rico\yii2images\models;
 
 use yii\helpers\BaseFileHelper;
 

@@ -13,11 +13,11 @@
  * @property integer $number
  */
 
-namespace rico2\yii2images\models;
+namespace rico\yii2images\models;
 
 use Yii;
 use yii\helpers\BaseFileHelper;
-use \rico2\yii2images\ModuleTrait;
+use \rico\yii2images\ModuleTrait;
 
 
 

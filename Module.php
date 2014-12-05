@@ -1,11 +1,11 @@
 <?php
 
-namespace rico2\yii2images;
+namespace rico\yii2images;
 
 
-use rico2\yii2images\models\PlaceHolderGD;
-use rico2\yii2images\models\PlaceHolderImagick;
-use rico2\yii2images\models\UrlManager;
+use rico\yii2images\models\PlaceHolderGD;
+use rico\yii2images\models\PlaceHolderImagick;
+use rico\yii2images\models\UrlManager;
 use SebastianBergmann\Exporter\Exception;
 use yii;
 use yii\helpers\Url;
@@ -14,19 +14,19 @@ use yii\helpers\Url;
 class Module extends \yii\base\Module
 {
     public $imageClasses = [
-        'GD' => 'rico2\yii2images\models\ImageGD',
-        'Imagick' => 'rico2\yii2images\models\ImageImagick'
+        'GD' => 'rico\yii2images\models\ImageGD',
+        'Imagick' => 'rico\yii2images\models\ImageImagick'
     ];
 
     public $waterMarkClasses = [
-        'GD' => 'rico2\yii2images\effects\WaterMarkGD',
-        'Imagick' => 'rico2\yii2images\effects\WaterMarkImagick'
+        'GD' => 'rico\yii2images\effects\WaterMarkGD',
+        'Imagick' => 'rico\yii2images\effects\WaterMarkImagick'
     ];
 
-    const IMAGE_BASE_CLASS = 'rico2\yii2images\models\ImageAbstract';
-    const IMAGE_INTERFACE_CLASS = 'rico2\yii2images\models\ImageInterface';
+    const IMAGE_BASE_CLASS = 'rico\yii2images\models\ImageAbstract';
+    const IMAGE_INTERFACE_CLASS = 'rico\yii2images\models\ImageInterface';
 
-    public $placeHolderClass = 'rico2\yii2images\models\PlaceHolder';
+    public $placeHolderClass = 'rico\yii2images\models\PlaceHolder';
 
     public $imagesStorePath = '@app/web/store';
 
@@ -34,9 +34,9 @@ class Module extends \yii\base\Module
 
     public $graphicsLibrary = 'GD';
 
-    public $controllerNamespace = 'rico2\yii2images\controllers';
+    public $controllerNamespace = 'rico\yii2images\controllers';
 
-    public $effectsFactoryInterfaceClass = 'rico2\yii2images\inters\EffectsFactoryInterface';
+    public $effectsFactoryInterfaceClass = 'rico\yii2images\inters\EffectsFactoryInterface';
 
     public $effectInterfaceClasses = null;
 
@@ -86,8 +86,8 @@ class Module extends \yii\base\Module
         $this->effects['waterMark'] = $this->waterMarkClasses[$this->graphicsLibrary];
 
         $this->effectInterfaceClasses = [
-            self::GD_ID => 'rico2\yii2images\inters\GDEffectInterface',
-            self::IMAGICK_ID => 'rico2\yii2images\inters\ImagickEffectInterface'
+            self::GD_ID => 'rico\yii2images\inters\GDEffectInterface',
+            self::IMAGICK_ID => 'rico\yii2images\inters\ImagickEffectInterface'
         ];
 
     }
@@ -281,7 +281,7 @@ class Module extends \yii\base\Module
             if(!file_exists(Yii::getAlias($this->placeHolderPath))){
                 throw new \Exception('PlaceHolder property defined, but placeholder file nor exists!!!');
             }
-            $placeHolderClass = 'rico2\yii2images\models\PlaceHolder'.$this->graphicsLibrary;
+            $placeHolderClass = 'rico\yii2images\models\PlaceHolder'.$this->graphicsLibrary;
             return new $placeHolderClass;
         } else {
             return null;

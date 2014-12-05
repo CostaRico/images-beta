@@ -6,12 +6,12 @@
  * Time: 15:35
  */
 
-namespace rico2\yii2images\controllers;
+namespace rico\yii2images\controllers;
 
 use yii\web\Controller;
 use yii;
-use rico2\yii2images\models\Image;
-use \rico2\yii2images\ModuleTrait;
+use rico\yii2images\models\Image;
+use \rico\yii2images\ModuleTrait;
 
 class ImagesController extends Controller
 {

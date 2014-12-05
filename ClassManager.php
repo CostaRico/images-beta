@@ -6,7 +6,7 @@
  * Time: 19:39
  */
 
-namespace rico2\yii2images;
+namespace rico\yii2images;
 use yii\base\Component;
 
 class ClassManager extends Component{

@@ -6,7 +6,7 @@
  * Time: 15:32
  */
 
-namespace rico2\yii2images;
+namespace rico\yii2images;
 use yii\web\AssetBundle;
 
 

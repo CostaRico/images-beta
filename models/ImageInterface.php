@@ -6,7 +6,7 @@
  * Time: 18:37
  */
 
-namespace rico2\yii2images\models;
+namespace rico\yii2images\models;
 
 
 interface ImageInterface {

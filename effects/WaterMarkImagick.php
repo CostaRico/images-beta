@@ -6,10 +6,10 @@
  * Time: 18:25
  */
 
-namespace rico2\yii2images\effects;
+namespace rico\yii2images\effects;
 
-use rico2\yii2images\inters\ImagickEffectInterface;
-use rico2\yii2images\ModuleTrait;
+use rico\yii2images\inters\ImagickEffectInterface;
+use rico\yii2images\ModuleTrait;
 use yii;
 
 class WaterMarkImagick extends EffectAbstract implements ImagickEffectInterface

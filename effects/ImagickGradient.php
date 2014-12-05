@@ -6,8 +6,8 @@
  * Time: 14:24
  */
 
-namespace rico2\yii2images\effects;
-use rico2\yii2images\inters\ImagickEffectInterface;
+namespace rico\yii2images\effects;
+use rico\yii2images\inters\ImagickEffectInterface;
 
 
 class ImagickGradient extends EffectAbstract implements ImagickEffectInterface{

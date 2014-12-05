@@ -22,7 +22,7 @@
 3. in your form view insert widget
 
 	==============================
-	<?=rico2\yii2images\widgets\FormLoader::widget([
+	<?=rico\yii2images\widgets\FormLoader::widget([
         'model'=>$model,
         'form'=>$form,
     ])?>
@@ -47,8 +47,8 @@
  * Date: 06.11.14
  * Time: 14:59
  */
-namespace rico2\yii2images\widgets;
-use rico2\yii2images\ModuleTrait;
+namespace rico\yii2images\widgets;
+use rico\yii2images\ModuleTrait;
 use yii\base\Widget;
 use yii\helpers\Html;
 

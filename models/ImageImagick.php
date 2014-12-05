@@ -6,7 +6,7 @@
  * Time: 18:36
  */
 
-namespace rico2\yii2images\models;
+namespace rico\yii2images\models;
 use yii\helpers\BaseFileHelper;
 
 class ImageImagick  extends ImageAbstract implements ImageInterface {

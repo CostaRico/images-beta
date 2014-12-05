@@ -6,7 +6,7 @@
  * Time: 18:47
  */
 
-namespace rico2\yii2images\effects;
+namespace rico\yii2images\effects;
 
 
 class EffectAbstract {

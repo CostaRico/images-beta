@@ -6,17 +6,17 @@
  * Time: 16:58
  */
 
-namespace rico2\yii2images\behaviors;
+namespace rico\yii2images\behaviors;
 
 
-use rico2\yii2images\models\Image;
+use rico\yii2images\models\Image;
 
 use yii;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
-use rico2\yii2images\models;
+use rico\yii2images\models;
 use yii\helpers\BaseFileHelper;
-use \rico2\yii2images\ModuleTrait;
+use \rico\yii2images\ModuleTrait;
 
 
 
@@ -71,7 +71,7 @@ class ImageBehave extends Behavior
         $imageClass = $this->getModule()->imageClass();
         $image = new $imageClass;
 
-        /** @var $image rico2\yii2images\models\ImageAbstract */
+        /** @var $image rico\yii2images\models\ImageAbstract */
         $image->itemId = $this->owner->id;
         $image->filePath = $pictureSubDir . '/' . $pictureFileName;
         $image->modelName = $this->getModule()->getShortClass($this->owner);

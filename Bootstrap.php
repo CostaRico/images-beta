@@ -6,7 +6,7 @@
  * Time: 12:51
  */
 
-namespace rico2\yii2images;
+namespace rico\yii2images;
 use yii\base\BootstrapInterface;
 use yii\web\GroupUrlRule;
 

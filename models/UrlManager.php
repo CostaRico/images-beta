@@ -5,9 +5,9 @@
  * Date: 30.11.14
  * Time: 19:07
  */
-namespace rico2\yii2images\models;
-use rico2\yii2images\models\ImageAbstract;
-use rico2\yii2images\ModuleTrait;
+namespace rico\yii2images\models;
+use rico\yii2images\models\ImageAbstract;
+use rico\yii2images\ModuleTrait;
 use yii\helpers\Url;
 
 class UrlManager {

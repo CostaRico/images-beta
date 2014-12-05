@@ -1,5 +1,5 @@
 {
-    "name": "costa-rico/yii2-images2",
+    "name": "costa-rico/yii2-images",
     "description": "yii2 images module for storing images",
     "keywords": ["yii2", "images", "store", "images store", "yii2-images", "Costa Rico"],
     "type": "yii2-extension",
@@ -27,10 +27,10 @@
     },
     "autoload": {
         "psr-4": {
-            "rico2\\yii2images\\": ""
+            "rico\\yii2images\\": ""
         }
     },
     "extra": {
-        "bootstrap": "rico2\\yii2images\\Bootstrap"
+        "bootstrap": "rico\\yii2images\\Bootstrap"
     }
 }

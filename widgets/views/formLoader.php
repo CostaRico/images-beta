@@ -3,7 +3,7 @@
  * @var $this yii\web\View
  * @var $urls []
  */
-use rico2\yii2images\Asset;
+use rico\yii2images\Asset;
 Asset::register($this);
 
 $this->registerJs(
